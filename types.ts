@@ -1,4 +1,3 @@
-
 export enum DocumentStatus {
   Pending = 'Pending',
   Processing = 'Processing',
@@ -15,6 +14,7 @@ export interface Document {
   id: string;
   name: string;
   status: DocumentStatus;
+  content: string;
 }
 
 export interface Index {

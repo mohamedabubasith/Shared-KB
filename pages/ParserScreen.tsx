@@ -1,14 +1,15 @@
-
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useAppContext } from '../contexts/AppContext';
-import { DocumentStatus } from '../types';
+import { Document, DocumentStatus } from '../types';
 import Button from '../components/common/Button';
 import Spinner from '../components/common/Spinner';
-import { Upload, FileText, Trash2, CheckCircle, Clock } from 'lucide-react';
+import Modal from '../components/common/Modal';
+import { Upload, FileText, Trash2, CheckCircle, Clock, Eye } from 'lucide-react';
 
 const ParserScreen: React.FC = () => {
     const { documents, addDocument, deleteDocument } = useAppContext();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [previewDoc, setPreviewDoc] = useState<Document | null>(null);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -18,6 +19,14 @@ const ParserScreen: React.FC = () => {
 
     const handleUploadClick = () => {
         fileInputRef.current?.click();
+    };
+
+    const handlePreviewClick = (doc: Document) => {
+        setPreviewDoc(doc);
+    };
+
+    const handleClosePreview = () => {
+        setPreviewDoc(null);
     };
 
     const getStatusIndicator = (status: DocumentStatus) => {
@@ -69,7 +78,18 @@ const ParserScreen: React.FC = () => {
                                     </td>
                                     <td className="p-4">{getStatusIndicator(doc.status)}</td>
                                     <td className="p-4 text-right">
-                                        <button onClick={() => deleteDocument(doc.id)} className="text-gray-400 hover:text-red-500 p-2 rounded-full transition-colors">
+                                        <button 
+                                            onClick={() => handlePreviewClick(doc)} 
+                                            className="text-gray-400 hover:text-nvidia-green p-2 rounded-full transition-colors"
+                                            aria-label={`Preview ${doc.name}`}
+                                            title={`Preview ${doc.name}`}
+                                        >
+                                            <Eye size={18} />
+                                        </button>
+                                        <button onClick={() => deleteDocument(doc.id)} className="text-gray-400 hover:text-red-500 p-2 rounded-full transition-colors"
+                                            aria-label={`Delete ${doc.name}`}
+                                            title={`Delete ${doc.name}`}
+                                        >
                                             <Trash2 size={18} />
                                         </button>
                                     </td>
@@ -85,6 +105,16 @@ const ParserScreen: React.FC = () => {
                     </tbody>
                 </table>
             </div>
+
+            <Modal isOpen={!!previewDoc} onClose={handleClosePreview} title={previewDoc?.name || 'Document Preview'}>
+                {previewDoc && (
+                    <div className="bg-dark-bg p-4 rounded-md border border-dark-border">
+                        <pre className="whitespace-pre-wrap font-sans text-sm text-gray-300">
+                            {previewDoc.content}
+                        </pre>
+                    </div>
+                )}
+            </Modal>
         </div>
     );
 };
