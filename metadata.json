@@ -1,0 +1,5 @@
+{
+  "name": "Shared Knowledgebase",
+  "description": "An intelligent knowledge base application that allows users to upload PDF documents, create searchable indexes, and query information using a simulated vector search. Includes API key management for programmatic access.",
+  "requestFramePermissions": []
+}
